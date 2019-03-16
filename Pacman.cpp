@@ -82,16 +82,15 @@ void level1_2()
 }
 void out()
 {
-	ofstream fo;
-	fo.open("result.txt");
-	fo << "Path finding for Pacman:\n";
+	ofstream f("result.txt");
+	f<<"Path finding for Pacman:\n";
 	int i;
-	for(i=0;i<path.size();++i) fo << "(" << path[i].first << ", " << path[i].second << ")\n";
-	fo << "Path length: \n" << path.size() - 1 << "\n";
-	fo << "Game point: " << gamePoint;
-	fo.close();
+	for(i=0;i<path.size();++i) f<<"("<<path[i].first-1<<", "<<path[i].second-1<<")\n";
+	f<<"Path length: "<<path.size()-1<<"\nGame point: "<<gamePoint;
+	f.close();
 }
-void draw() {
+void draw()
+{
 	HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
 	COORD pos = { 5,5 };
 	int pathSize = path.size();
@@ -123,12 +122,6 @@ void draw() {
 		}
 		Sleep(2000);
 	}
-	ofstream f("result.txt");
-	f<<"Path finding for Pacman:\n";
-	int i;
-	for(i=0;i<path.size();++i) f<<"("<<path[i].first-1<<", "<<path[i].second-1<<")\n";
-	f<<"Path length: "<<path.size()-1<<"\nGame point: "<<gamePoint;
-	f.close();
 }
 int main()
 {
