@@ -104,23 +104,30 @@ void draw()
 					cout << "#";
 					break;
 				case 2:
-					SetConsoleTextAttribute(h, 15 | FOREGROUND_INTENSITY);
-					cout << "o";
+					if (i == path[k].first&&j == path[k].second) {
+						SetConsoleTextAttribute(h, 14 | FOREGROUND_INTENSITY);
+						cout << "x";
+					}
+					else {
+						SetConsoleTextAttribute(h, 15 | FOREGROUND_INTENSITY);
+						cout << "o";
+					}
 					break;
 				case 3:
 					SetConsoleTextAttribute(h, 12 | FOREGROUND_INTENSITY);
 					cout << "!";
 					break;
 				default:
-					SetConsoleTextAttribute(h, 14 | FOREGROUND_INTENSITY);
-					//if (i == path[k].first&&j == path[k].second)
-						//cout << "x";
-					//else
+					if (i == path[k].first&&j == path[k].second) {
+						SetConsoleTextAttribute(h, 14 | FOREGROUND_INTENSITY);
+						cout << "x";
+					}
+					else
 						cout << " ";
 				}
 			cout << endl;
 		}
-		Sleep(2000);
+		Sleep(1000);
 	}
 }
 int main()
