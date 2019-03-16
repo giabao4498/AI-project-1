@@ -1,6 +1,10 @@
 #include<cstdio>
 #include<vector>
 #include<deque>
+#include<iostream>
+#include<Windows.h>
+#include<stdlib.h>
+#include<fstream>
 using namespace std;
 typedef pair<int,int> position;
 struct element1
@@ -112,17 +116,52 @@ void level2()
 }
 void out()
 {
-	freopen("result.txt","w",stdout);
-	printf("Path finding for Pacman:\n");
+	ofstream fo;
+	fo.open("result.txt");
+	fo << "Path finding for Pacman:\n";
 	int i;
-	for(i=0;i<path.size();++i) printf("(%d, %d)\n",path[i].first,path[i].second);
-	printf("Path length: %d\n",path.size()-1);
-	printf("Game point: %d",gamePoint);
-	fclose(stdout);
+	for(i=0;i<path.size();++i) fo << "(" << path[i].first << ", " << path[i].second << ")\n";
+	fo << "Path length: \n" << path.size() - 1 << "\n";
+	fo << "Game point: " << gamePoint;
+	fo.close();
+}
+void draw() {
+	HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
+	COORD pos = { 5,5 };
+	int pathSize = path.size();
+	for (int k = 0; k < pathSize; k++) {
+		system("CLS");
+		for (int i = 1; i <= N; i++) {
+			for (int j = 1; j <= M; j++)
+				switch (matrix[i][j].state) {
+				case 1:
+					SetConsoleTextAttribute(h, 10 | FOREGROUND_INTENSITY);
+					cout << "#";
+					break;
+				case 2:
+					SetConsoleTextAttribute(h, 15 | FOREGROUND_INTENSITY);
+					cout << "o";
+					break;
+				case 3:
+					SetConsoleTextAttribute(h, 12 | FOREGROUND_INTENSITY);
+					cout << "!";
+					break;
+				default:
+					SetConsoleTextAttribute(h, 14 | FOREGROUND_INTENSITY);
+					//if (i == path[k].first&&j == path[k].second)
+						//cout << "x";
+					//else
+						cout << " ";
+				}
+			cout << endl;
+		}
+		Sleep(2000);
+	}
 }
 int main()
 {
 	inp();
 	level2();
 	out();
+	draw();
 }
