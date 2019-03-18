@@ -99,7 +99,12 @@ void draw()
 	COORD pos[6];
 	int color[6] = { 15,14,10,11,12,15 };
 
-	string title[6] = { "-------------------------PACMAN GAME-------------------------","x : PACMAN", "# : WALL", "o : FOOD", "! : MONSTER", ". : EMPTY" };
+	string title[6] = { "----------------------------------------------------------------------PACMAN GAME----------------------------------------------------------------------", 
+		"x : PACMAN", 
+		"# : WALL", 
+		"o : FOOD", 
+		"! : MONSTER", 
+		". : EMPTY" };
 	for (int i = 0; i < 6; i++) {
 		pos[i].X = (maxSize.X - title[i].length()) / 2;
 		pos[i].Y = i;
