@@ -12,15 +12,17 @@ using namespace std;
 typedef pair<int,int> position;
 struct element1
 {
-	short state; position pre; bool isNew;
+	short state; position pre;
 };
 struct element2
 {
-	int x,y,point;
+	int x,y,len;
 };
+typedef vector<vector<element1> > matrix;
 const short foodPoint=10;
 const pair<short,short> direction[4]={{-1,0},{0,1},{1,0},{0,-1}};
-int N,M,gamePoint; vector<vector<element1> > matrix(1); position pacman; vector<position> food; deque<element2> q; deque<position> path;
+const int waitTime=1000;
+int N,M,gamePoint; matrix original(1); position pacman; deque<position> food,path; deque<element2> q;
 void inp()
 {
 	freopen("map.txt","r",stdin);
@@ -28,21 +30,19 @@ void inp()
 	int i,j;
 	for(i=1;i<=N;++i)
 	{
-		matrix.push_back({{1,{0,0},false}});
+		original.push_back({{1,{0,0}}});
 		for(j=1;j<=M;++j)
 		{
-			matrix[i].push_back({0,{0,0},true});
-			scanf("%hd",&matrix[i][j].state);
-			if (matrix[i][j].state==2) food.push_back({i,j});
-			else if (matrix[i][j].state==1 || matrix[i][j].state==3) matrix[i][j].isNew=false;
+			original[i].push_back({0,{0,0}});
+			scanf("%hd",&original[i][j].state);
 		}
-		matrix[i].push_back({1,{0,0},false});
+		original[i].push_back({1,{0,0}});
 	}
-	matrix.push_back({});
+	original.push_back({});
 	for(i=M+1;i>=0;--i)
 	{
-		matrix[0].push_back({1,{0,0},false});
-		matrix.back().push_back({1,{0,0},false});
+		original[0].push_back({1,{0,0}});
+		original.back().push_back({1,{0,0}});
 	}
 	scanf("%d%d",&pacman.first,&pacman.second);
 	fclose(stdin);
@@ -51,37 +51,67 @@ void inp()
 void level1_2()
 {
 	q.push_back({pacman.first,pacman.second,0});
-	if (pacman==food[0]) gamePoint=10;
+	matrix a=original;
+	int i,j;
+	for(i=1;i<=N;++i)
+	for(j=1;j<=M;++j)
+	if (a[i][j].state==2)
+	{
+		food.push_back({i,j});
+		goto label1;
+	}
+	label1:
+	if (pacman==food[0]) gamePoint=foodPoint;
 	else
 	{
-		gamePoint=0;
-		matrix[pacman.first][pacman.second].isNew=false;
-		short i;
+		gamePoint=0; a[pacman.first][pacman.second].state=1;
 		do
 		{
 			for(i=0;i<4;++i)
-			if (matrix[q[0].x+direction[i].first][q[0].y+direction[i].second].isNew)
+			if (a[q[0].x+direction[i].first][q[0].y+direction[i].second].state==0 || a[q[0].x+direction[i].first][q[0].y+direction[i].second].state==2)
 			{
-				q.push_back({q[0].x+direction[i].first,q[0].y+direction[i].second,q[0].point-1});
-				matrix[q.back().x][q.back().y].pre={q[0].x,q[0].y};
-				if (matrix[q.back().x][q.back().y].state==2)
+				q.push_back({q[0].x+direction[i].first,q[0].y+direction[i].second,q[0].len+1});
+				a[q.back().x][q.back().y].pre={q[0].x,q[0].y};
+				if (a[q.back().x][q.back().y].state==2)
 				{
-					gamePoint=q.back().point+10;
-					goto label1;
+					gamePoint=foodPoint-q.back().len;
+					goto label2;
 				}
-				matrix[q.back().x][q.back().y].isNew=false;
+				a[q.back().x][q.back().y].state=1;
 			}
 			q.pop_front();
 		}
-		while (!q.empty() && q[0].point>-9);
+		while (!q.empty() && q[0].len<foodPoint-1);
 	}
-	label1:
-	while (matrix[food[0].first][food[0].second].pre!=position(0,0))
+	label2:
+	while (a[food[0].first][food[0].second].pre!=position(0,0))
 	{
 		path.push_front(food[0]);
-		food[0]=matrix[food[0].first][food[0].second].pre;
+		food[0]=a[food[0].first][food[0].second].pre;
 	}
 	path.push_front(pacman);
+}
+void dfs(const position& cur,matrix& a,int& comeback)
+{
+	gamePoint-=comeback+1; comeback=0;
+	if (a[cur.first][cur.second].state==2) gamePoint+=foodPoint;
+	a[cur.first][cur.second].state=1;
+	path.insert(path.end(),food.begin(),food.end());
+	path.push_back(cur);
+	food.clear();
+	for(short i=0;i<4;++i)
+	if (a[cur.first+direction[i].first][cur.second+direction[i].second].state==0 || a[cur.first+direction[i].first][cur.second+direction[i].second].state==2)
+	{
+		dfs({cur.first+direction[i].first,cur.second+direction[i].second},a,comeback);
+		food.push_back(cur);
+	}
+	++comeback;
+}
+void level3()
+{
+	matrix a=original; int comeback=-1;
+	gamePoint=0;
+	dfs(pacman,a,comeback);
 }
 void out()
 {
@@ -124,7 +154,7 @@ void draw()
 
 		for (int i = 1; i <= N; i++) {
 			for (int j = 1; j <= M; j++)
-				switch (matrix[i][j].state) {
+				switch (original[i][j].state) {
 				case 1:
 					SetConsoleTextAttribute(h, 10 | FOREGROUND_INTENSITY);
 					cout << "#";
@@ -133,6 +163,7 @@ void draw()
 					if (i == path[k].first&&j == path[k].second) {
 						SetConsoleTextAttribute(h, 14 | FOREGROUND_INTENSITY);
 						cout << "x";
+						original[i][j].state=0;
 					}
 					else {
 						SetConsoleTextAttribute(h, 11 | FOREGROUND_INTENSITY);
@@ -160,13 +191,13 @@ void draw()
 		for (int i = 0; i <= k; i++) {
 			cout << "(" << path[i].first - 1 << ", " << path[i].second - 1 << ") ";
 		}
-		Sleep(1000);
+		Sleep(waitTime);
 	}
 }
 int main()
 {
 	inp();
-	level1_2();
+	level3();
 	out();
 	draw();
 }
