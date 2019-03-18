@@ -21,7 +21,7 @@ struct element2
 typedef vector<vector<element1> > matrix;
 const short foodPoint=10;
 const pair<short,short> direction[4]={{-1,0},{0,1},{1,0},{0,-1}};
-const int waitTime=1000;
+const int waitTime=500;
 int N,M,gamePoint; matrix original(1); position pacman; deque<position> food,path; deque<element2> q;
 void inp()
 {
@@ -186,11 +186,14 @@ void draw()
 				}
 			cout << endl;
 		}
+		/*
 		SetConsoleTextAttribute(h, 13 | FOREGROUND_INTENSITY);
 		cout << "Path: ";
 		for (int i = 0; i <= k; i++) {
 			cout << "(" << path[i].first - 1 << ", " << path[i].second - 1 << ") ";
 		}
+		SetConsoleCursorPosition(h, { 0,0 });
+		*/
 		Sleep(waitTime);
 	}
 }
