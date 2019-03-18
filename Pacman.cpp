@@ -5,6 +5,9 @@
 #include<Windows.h>
 #include<stdlib.h>
 #include<fstream>
+#include<string>
+#include<string.h>
+#include<cstring>
 using namespace std;
 typedef pair<int,int> position;
 struct element1
@@ -92,10 +95,33 @@ void out()
 void draw()
 {
 	HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
-	COORD pos = { 5,5 };
+	COORD maxSize = GetLargestConsoleWindowSize(h);
+	COORD pos[6];
+	int color[6] = { 15,14,10,11,12,15 };
+
+	string title[6] = { "----------------------------------------------------------------------PACMAN GAME----------------------------------------------------------------------", 
+		"x : PACMAN", 
+		"# : WALL", 
+		"o : FOOD", 
+		"! : MONSTER", 
+		". : EMPTY" };
+	for (int i = 0; i < 6; i++) {
+		pos[i].X = (maxSize.X - title[i].length()) / 2;
+		pos[i].Y = i;
+	}
+
 	int pathSize = path.size();
+
+	ShowWindow(GetConsoleWindow(), SW_MAXIMIZE);
+
 	for (int k = 0; k < pathSize; k++) {
 		system("CLS");
+		for (int i = 0; i < 6; i++) {
+			SetConsoleCursorPosition(h, pos[i]);
+			SetConsoleTextAttribute(h, color[i] | FOREGROUND_INTENSITY);
+			cout << title[i] << endl;
+		}
+
 		for (int i = 1; i <= N; i++) {
 			for (int j = 1; j <= M; j++)
 				switch (matrix[i][j].state) {
@@ -109,7 +135,7 @@ void draw()
 						cout << "x";
 					}
 					else {
-						SetConsoleTextAttribute(h, 15 | FOREGROUND_INTENSITY);
+						SetConsoleTextAttribute(h, 11 | FOREGROUND_INTENSITY);
 						cout << "o";
 					}
 					break;
@@ -122,10 +148,17 @@ void draw()
 						SetConsoleTextAttribute(h, 14 | FOREGROUND_INTENSITY);
 						cout << "x";
 					}
-					else
-						cout << " ";
+					else {
+						SetConsoleTextAttribute(h, 15 | FOREGROUND_INTENSITY);
+						cout << ".";
+					}
 				}
 			cout << endl;
+		}
+		SetConsoleTextAttribute(h, 13 | FOREGROUND_INTENSITY);
+		cout << "Path: ";
+		for (int i = 0; i <= k; i++) {
+			cout << "(" << path[i].first - 1 << ", " << path[i].second - 1 << ") ";
 		}
 		Sleep(1000);
 	}
