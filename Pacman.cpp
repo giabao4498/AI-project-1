@@ -288,9 +288,12 @@ void draw()
 		original[path[k].first][path[k].second].state = 4;
 		if (level == 4)
 			for (int t = 0; t < waySize; t++) {
-				if (original[way[t][k].first][way[t][k].second].state == 2)
-					pre[t] = true;
-				original[way[t][k].first][way[t][k].second].state = 3;
+				if (way[t].size() > k) {
+					if (original[way[t][k].first][way[t][k].second].state == 2)
+						pre[t] = true;
+					original[way[t][k].first][way[t][k].second].state = 3;
+				}
+				else original[way[t][way[t].size() - 1].first][way[t][way[t].size() - 1].second].state = 3;
 			}
 		for (int i = 0; i < 6; i++) {
 			SetConsoleCursorPosition(h, pos[i]);
@@ -328,12 +331,14 @@ void draw()
 		original[path[k].first][path[k].second].state = 0;
 		if (level == 4)
 			for (int t = 0; t < waySize; t++) {
-				if (pre[t]) {
-					original[way[t][k].first][way[t][k].second].state = 2;
-					pre[t] = false;
+				if (way[t].size() > k) {
+					if (pre[t]) {
+						original[way[t][k].first][way[t][k].second].state = 2;
+						pre[t] = false;
+					}
+					else
+						original[way[t][k].first][way[t][k].second].state = 0;
 				}
-				else
-					original[way[t][k].first][way[t][k].second].state = 0;
 		}
 		Sleep(waitTime);
 	}
