@@ -158,12 +158,12 @@ void level3()
 	monster.clear();
 	dfs(pacman,a,comeback);
 }
-short bfsPacman(matrix& a)
+short bfsPacman(const matrix& a)
 {
-	deque<element2> q; short i;
-	a[pacman.first][pacman.second].state=1;
+	deque<element2> q; short i; matrix b=a;
+	b[pacman.first][pacman.second].state=1;
 	for(i=0;i<4;++i)
-	switch (a[pacman.first+direction[i].first][pacman.second+direction[i].second].state)
+	switch (b[pacman.first+direction[i].first][pacman.second+direction[i].second].state)
 	{
 		case 0: q.push_back({pacman.first+direction[i].first,pacman.second+direction[i].second,i}); break;
 		case 2: return i;
@@ -171,21 +171,21 @@ short bfsPacman(matrix& a)
 	while (!q.empty())
 	{
 		for(i=0;i<4;++i)
-		switch (a[q[0].x+direction[i].first][q[0].y+direction[i].second].state)
+		switch (b[q[0].x+direction[i].first][q[0].y+direction[i].second].state)
 		{
-			case 0: q.push_back({q[0].x+direction[i].first,q[0].y+direction[i].second,q[0].len}); a[q.back().x][q.back().y].state=1; break;
+			case 0: q.push_back({q[0].x+direction[i].first,q[0].y+direction[i].second,q[0].len}); b[q.back().x][q.back().y].state=1; break;
 			case 2: return q[0].len;
 		}
 		q.pop_front();
 	}
 	return -1;
 }
-short bfsMonster(const position& m,matrix& a)
+short bfsMonster(const position& m,const matrix& a)
 {
-	deque<element2> q; short i;
-	a[m.first][m.second].state=1;
+	deque<element2> q; short i; matrix b=a;
+	b[m.first][m.second].state=1;
 	for(i=0;i<4;++i)
-	switch (a[m.first+direction[i].first][m.second+direction[i].second].state)
+	switch (b[m.first+direction[i].first][m.second+direction[i].second].state)
 	{
 		case 0: q.push_back({m.first+direction[i].first,m.second+direction[i].second,i}); break;
 		case 2: return i;
@@ -193,11 +193,11 @@ short bfsMonster(const position& m,matrix& a)
 	while (!q.empty())
 	{
 		for(i=0;i<4;++i)
-		if (a[q[0].x+direction[i].first][q[0].y+direction[i].second].state!=1)
+		if (b[q[0].x+direction[i].first][q[0].y+direction[i].second].state!=1)
 		{
 			q.push_back({q[0].x+direction[i].first,q[0].y+direction[i].second,q[0].len});
 			if (position(q.back().x,q.back().y)==pacman) return q[0].len;
-			a[q.back().x][q.back().y].state=1;
+			b[q.back().x][q.back().y].state=1;
 		}
 		q.pop_front();
 	}
@@ -211,12 +211,12 @@ bool moveMonster(matrix& a)
 	{
 		monster[i].first+=direction[j].first; monster[i].second+=direction[j].second;
 		if (monster[i]==pacman) return false;
-		if (original[monster[i].first][monster[i].second].state!=3)
+		if (a[monster[i].first][monster[i].second].state!=3)
 		{
-			original[monster[i].first][monster[i].second].anotherState=original[monster[i].first][monster[i].second].state;
-			original[monster[i].first][monster[i].second].state=3;
+			a[monster[i].first][monster[i].second].anotherState=a[monster[i].first][monster[i].second].state;
+			a[monster[i].first][monster[i].second].state=3;
 		}
-		original[monster[i].first-direction[j].first][monster[i].second-direction[j].second].state=original[monster[i].first-direction[j].first][monster[i].second-direction[j].second].anotherState;
+		a[monster[i].first-direction[j].first][monster[i].second-direction[j].second].state=a[monster[i].first-direction[j].first][monster[i].second-direction[j].second].anotherState;
 		way[i].push_back(monster[i]);
 	}
 	return true;
@@ -229,11 +229,14 @@ void level4()
 	for(i=0;i<monster.size();++i) way.push_back({monster[i]});
 	while (!food.empty() && (i=bfsPacman(a))>=0)
 	{
+		cout<<i<<endl;
 		pacman.first+=direction[i].first; pacman.second+=direction[i].second;
 		if (!moveMonster(a)) break;
-		if (original[pacman.first][pacman.second].state==2)
+		cout<<"move success\n";
+		if (a[pacman.first][pacman.second].state==2)
 		{
-			gamePoint+=foodPoint; original[pacman.first][pacman.second].state=0;
+			gamePoint+=foodPoint; a[pacman.first][pacman.second].state=0;
+			food.erase(pacman);
 		}
 		path.push_back(pacman);
 	}
