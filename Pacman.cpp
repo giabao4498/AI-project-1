@@ -22,7 +22,7 @@ typedef pair<short,short> couple;
 const short foodPoint=10;
 const couple direction[4]={{-1,0},{0,1},{1,0},{0,-1}};
 const int waitTime=1000;
-bool* pre;
+vector<bool> pre;
 int N,M,gamePoint; matrix original(1); position pacman; deque<position> path; short level; vector<position> monster; set<position> food; vector<vector<position> > way;
 void inp()
 {
@@ -278,9 +278,8 @@ void draw()
 	for (set<position>::iterator i = food.begin(); i != food.end(); i++)
 		original[i->first][i->second].state = 2;
 
-	pre = new bool[waySize];
 	for (int i = 0; i < waySize; i++)
-		pre[i] = false;
+		pre.push_back(false);
 
 	ShowWindow(GetConsoleWindow(), SW_MAXIMIZE);
 
@@ -336,7 +335,6 @@ void draw()
 		}
 		Sleep(waitTime);
 	}
-	delete pre;
 }
 int main()
 {
