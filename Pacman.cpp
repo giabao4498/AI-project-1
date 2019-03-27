@@ -158,21 +158,25 @@ void level3()
 }
 short bfsPacman(const matrix& a)
 {
-	deque<element2> q; short i; matrix b=a;
+	struct element3
+	{
+		int x,y,len; short d;
+	};
+	deque<element3> q; short i; matrix b=a;
 	b[pacman.first][pacman.second].state=1;
 	for(i=0;i<4;++i)
 	switch (b[pacman.first+direction[i].first][pacman.second+direction[i].second].state)
 	{
-		case 0: q.push_back({pacman.first+direction[i].first,pacman.second+direction[i].second,i}); break;
+		case 0: q.push_back({pacman.first+direction[i].first,pacman.second+direction[i].second,1,i}); break;
 		case 2: return i;
 	}
-	while (!q.empty())
+	while (!q.empty() && q[0].len<10)
 	{
 		for(i=0;i<4;++i)
 		switch (b[q[0].x+direction[i].first][q[0].y+direction[i].second].state)
 		{
-			case 0: q.push_back({q[0].x+direction[i].first,q[0].y+direction[i].second,q[0].len}); b[q.back().x][q.back().y].state=1; break;
-			case 2: return q[0].len;
+			case 0: q.push_back({q[0].x+direction[i].first,q[0].y+direction[i].second,q[0].len+1,i}); b[q.back().x][q.back().y].state=1; break;
+			case 2: return q[0].d;
 		}
 		q.pop_front();
 	}
