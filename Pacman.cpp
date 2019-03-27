@@ -2,9 +2,7 @@
 #include<deque>
 #include<iostream>
 #include<Windows.h>
-#include<cstdlib>
 #include<fstream>
-#include<string>
 #include<string>
 #include<set>
 using namespace std;
@@ -185,10 +183,10 @@ short bfsMonster(const position& m,const matrix& a)
 	deque<element2> q; short i; matrix b=a;
 	b[m.first][m.second].state=1;
 	for(i=0;i<4;++i)
-	switch (b[m.first+direction[i].first][m.second+direction[i].second].state)
+	if (b[m.first+direction[i].first][m.second+direction[i].second].state!=1)
 	{
-		case 0: q.push_back({m.first+direction[i].first,m.second+direction[i].second,i}); break;
-		case 2: return i;
+		q.push_back({m.first+direction[i].first,m.second+direction[i].second,i});
+		if (position(q.back().x,q.back().y)==pacman) return i;
 	}
 	while (!q.empty())
 	{
@@ -229,10 +227,10 @@ void level4()
 	for(i=0;i<monster.size();++i) way.push_back({monster[i]});
 	while (!food.empty() && (i=bfsPacman(a))>=0)
 	{
-		cout<<i<<endl;
+		a[pacman.first][pacman.second].state=4;
 		pacman.first+=direction[i].first; pacman.second+=direction[i].second;
 		if (!moveMonster(a)) break;
-		cout<<"move success\n";
+		--gamePoint;
 		if (a[pacman.first][pacman.second].state==2)
 		{
 			gamePoint+=foodPoint; a[pacman.first][pacman.second].state=0;
