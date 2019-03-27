@@ -267,11 +267,11 @@ void draw()
 		pos[i].X = (maxSize.X - title[i].length()) / 2;
 		pos[i].Y = i;
 	}
-
-	for (int i = 1; i <= N; i++)
-		for (int j = 1; j <= M; j++)
-			if (original[i][j].state == 3)
-				original[i][j].state = 0;
+	if (level == 4)
+		for (int i = 1; i <= N; i++)
+			for (int j = 1; j <= M; j++)
+				if (original[i][j].state == 3)
+					original[i][j].state = 0;
 
 	int pathSize = path.size();
 	int waySize = way.size();
@@ -286,11 +286,12 @@ void draw()
 	for (int k = 0; k < pathSize; k++) {
 		system("CLS");
 		original[path[k].first][path[k].second].state = 4;
-		for (int t = 0; t < waySize; t++) {
-			if (original[way[t][k].first][way[t][k].second].state == 2)
-				pre[t] = true;
-			original[way[t][k].first][way[t][k].second].state = 3;
-		}
+		if (level == 4)
+			for (int t = 0; t < waySize; t++) {
+				if (original[way[t][k].first][way[t][k].second].state == 2)
+					pre[t] = true;
+				original[way[t][k].first][way[t][k].second].state = 3;
+			}
 		for (int i = 0; i < 6; i++) {
 			SetConsoleCursorPosition(h, pos[i]);
 			SetConsoleTextAttribute(h, color[i] | FOREGROUND_INTENSITY);
@@ -325,13 +326,14 @@ void draw()
 		SetConsoleTextAttribute(h, 13 | FOREGROUND_INTENSITY);
 
 		original[path[k].first][path[k].second].state = 0;
-		for (int t = 0; t < waySize; t++) {
-			if (pre[t]) {
-				original[way[t][k].first][way[t][k].second].state = 2;
-				pre[t] = false;
-			}
-			else
-				original[way[t][k].first][way[t][k].second].state = 0;
+		if (level == 4)
+			for (int t = 0; t < waySize; t++) {
+				if (pre[t]) {
+					original[way[t][k].first][way[t][k].second].state = 2;
+					pre[t] = false;
+				}
+				else
+					original[way[t][k].first][way[t][k].second].state = 0;
 		}
 		Sleep(waitTime);
 	}
