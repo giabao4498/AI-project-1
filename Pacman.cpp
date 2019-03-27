@@ -328,11 +328,11 @@ void draw()
 		original[path[k].first][path[k].second].state = 0;
 		for (int t = 0; t < waySize; t++) {
 			if (pre[t]) {
-				original[way[t][k].first][way[t][k].first].state = 2;
+				original[way[t][k].first][way[t][k].second].state = 2;
 				pre[t] = false;
 			}
 			else
-				original[way[t][k].first][way[t][k].first].state = 0;
+				original[way[t][k].first][way[t][k].second].state = 0;
 		}
 		Sleep(waitTime);
 	}
