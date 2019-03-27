@@ -275,6 +275,8 @@ void draw()
 
 	int pathSize = path.size();
 	int waySize = way.size();
+	for (set<position>::iterator i = food.begin(); i != food.end(); i++)
+		original[i->first][i->second].state = 2;
 
 	pre = new bool[waySize];
 	for (int i = 0; i < waySize; i++)
