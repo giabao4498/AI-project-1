@@ -22,6 +22,7 @@ typedef pair<short,short> couple;
 const short foodPoint=10;
 const couple direction[4]={{-1,0},{0,1},{1,0},{0,-1}};
 const int waitTime=1000;
+bool* pre;
 int N,M,gamePoint; matrix original(1); position pacman; deque<position> path; short level; vector<position> monster; set<position> food; vector<vector<position> > way;
 void inp()
 {
@@ -264,12 +265,28 @@ void draw()
 		pos[i].Y = i;
 	}
 
+	for (int i = 1; i <= N; i++)
+		for (int j = 1; j <= M; j++)
+			if (original[i][j].state == 3)
+				original[i][j].state = 0;
+
 	int pathSize = path.size();
+	int waySize = way.size();
+
+	pre = new bool[waySize];
+	for (int i = 0; i < waySize; i++)
+		pre[i] = false;
 
 	ShowWindow(GetConsoleWindow(), SW_MAXIMIZE);
 
 	for (int k = 0; k < pathSize; k++) {
 		system("CLS");
+		original[path[k].first][path[k].second].state = 4;
+		for (int t = 0; t < waySize; t++) {
+			if (original[way[t][k].first][way[t][k].second].state == 2)
+				pre[t] = true;
+			original[way[t][k].first][way[t][k].second].state = 3;
+		}
 		for (int i = 0; i < 6; i++) {
 			SetConsoleCursorPosition(h, pos[i]);
 			SetConsoleTextAttribute(h, color[i] | FOREGROUND_INTENSITY);
@@ -284,39 +301,37 @@ void draw()
 					cout << "#";
 					break;
 				case 2:
-					if (i == path[k].first && j == path[k].second) {
-						SetConsoleTextAttribute(h, 14 | FOREGROUND_INTENSITY);
-						cout << "x";
-						original[i][j].state=0;
-					}
-					else {
-						SetConsoleTextAttribute(h, 11 | FOREGROUND_INTENSITY);
-						cout << "o";
-					}
+					SetConsoleTextAttribute(h, 11 | FOREGROUND_INTENSITY);
+					cout << "o";
 					break;
 				case 3:
 					SetConsoleTextAttribute(h, 12 | FOREGROUND_INTENSITY);
 					cout << "!";
 					break;
+				case 4:
+					SetConsoleTextAttribute(h, 14 | FOREGROUND_INTENSITY);
+					cout << "x";
+					break;
 				default:
-					if (i == path[k].first && j == path[k].second) {
-						SetConsoleTextAttribute(h, 14 | FOREGROUND_INTENSITY);
-						cout << "x";
-					}
-					else {
-						SetConsoleTextAttribute(h, 15 | FOREGROUND_INTENSITY);
-						cout << ".";
-					}
+					SetConsoleTextAttribute(h, 15 | FOREGROUND_INTENSITY);
+					cout << ".";
 				}
 			cout << endl;
 		}
 		SetConsoleTextAttribute(h, 13 | FOREGROUND_INTENSITY);
-		cout << "Path: ";
-		for (int i = 0; i <= k; i++) {
-			cout << "(" << path[i].first - 1 << ", " << path[i].second - 1 << ") ";
+
+		original[path[k].first][path[k].second].state = 0;
+		for (int t = 0; t < waySize; t++) {
+			if (pre[t]) {
+				original[way[t][k].first][way[t][k].first].state = 2;
+				pre[t] = false;
+			}
+			else
+				original[way[t][k].first][way[t][k].first].state = 0;
 		}
 		Sleep(waitTime);
 	}
+	delete pre;
 }
 int main()
 {
