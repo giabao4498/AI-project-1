@@ -5,6 +5,7 @@
 #include<fstream>
 #include<string>
 #include<set>
+#include<time.h>
 using namespace std;
 typedef pair<int,int> position;
 struct element1
@@ -15,11 +16,12 @@ struct element2
 {
 	int x,y,len;
 };
+clock_t startTime, endTime;
 typedef vector<vector<element1> > matrix;
 typedef pair<short,short> couple;
 const short foodPoint=10;
 const couple direction[4]={{-1,0},{0,1},{1,0},{0,-1}};
-const int waitTime=1000;
+const int waitTime=200;
 vector<bool> pre;
 int N,M,gamePoint; matrix original(1); position pacman; deque<position> path; short level; vector<position> monster; set<position> food; vector<vector<position> > way;
 void inp()
@@ -344,10 +346,12 @@ void draw()
 		}
 		Sleep(waitTime);
 	}
+	cout << "Running time: " << (double)(endTime - startTime) / CLOCKS_PER_SEC << endl;
 }
 int main()
 {
 	inp();
+	startTime = clock();
 	switch (level)
 	{
 		case 3: level3(); break;
@@ -355,6 +359,7 @@ int main()
 		default:
 			level1_2();
 	}
+	endTime = clock();
 	out();
 	draw();
 }
