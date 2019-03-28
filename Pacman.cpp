@@ -175,7 +175,7 @@ short bfsPacman(const matrix& a)
 		for(i=0;i<4;++i)
 		switch (b[q[0].x+direction[i].first][q[0].y+direction[i].second].state)
 		{
-			case 0: q.push_back({q[0].x+direction[i].first,q[0].y+direction[i].second,q[0].len+1,i}); b[q.back().x][q.back().y].state=1; break;
+			case 0: q.push_back({q[0].x+direction[i].first,q[0].y+direction[i].second,q[0].len+1,q[0].d}); b[q.back().x][q.back().y].state=1; break;
 			case 2: return q[0].d;
 		}
 		q.pop_front();
