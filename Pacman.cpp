@@ -362,4 +362,5 @@ int main()
 	endTime = clock();
 	out();
 	draw();
+	system("pause");
 }
