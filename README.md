@@ -1,2 +1,1 @@
-# AI-project-1
-Artificial Intelligence - Project 1
+# AI-project-1 : SEARCH
